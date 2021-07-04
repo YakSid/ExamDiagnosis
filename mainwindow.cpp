@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_areaMg->setRenderHint(QPainter::Antialiasing);
     m_areaMg->setCacheMode(QGraphicsView::CacheBackground);
     m_areaMg->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    m_areaMg->setSceneRect(0, 0, 950, 650);
 }
 
 MainWindow::~MainWindow()
@@ -20,5 +21,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    //
+    // BUG: почему-то если в конструкторе, то неправильно считывает размер
+    m_areaMg->init();
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    m_areaMg->test();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    m_areaMg->test2();
 }

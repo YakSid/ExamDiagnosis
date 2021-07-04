@@ -27,4 +27,20 @@ struct SExample {
     }
 };
 
+enum class EBlockState { none, correct, incorrect, noDifference };
+
+const qint32 BLOCK_HEIGHT = 20;
+const qint32 BLOCK_WIDTH = 20;
+const qint32 XMARGIN_BETWEEN_CELLS = 5;
+const qint32 YMARGIN_BETWEEN_CELLS = 3;
+//! Единица размера строчки по горизонтали
+const qint32 ONE_WIDTH = BLOCK_WIDTH + XMARGIN_BETWEEN_CELLS;
+//! Единица размера строчки по вертикали
+const qint32 ONE_HEIGHT = BLOCK_HEIGHT + YMARGIN_BETWEEN_CELLS;
+const qint32 SCENE_HEIGHT = 650;
+const qint32 SCENE_WIDTH = 950;
+
+const QStringList DIS_BLOCK { "Основное заболевание:", "Фоновое заболевание:", "Осложнения основного заболевания:",
+                              "Сопутствующие заболевания:" };
+
 #endif // CSTRUCTS_H

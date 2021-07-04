@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include "ccell.h"
+#include "cvisualblock.h"
 
 class CAreaManager : public QGraphicsView
 {
@@ -11,13 +13,25 @@ class CAreaManager : public QGraphicsView
 public:
     explicit CAreaManager(QWidget *parent = nullptr);
     ~CAreaManager();
+    void init();
+
+    void test();
+
+    void test2();
 
 signals:
-
 public slots:
+    void blockMoved();
+
+private:
+    void _buildMatrix();
 
 private:
     QGraphicsScene *m_scene;
+    QList<QList<CCell>> m_matrix;
+    QList<CVisualBlock *> m_vBlocks;
+    //! Высота с которой начинается зона пула слов
+    qint32 m_poolStarts;
 };
 
 #endif // CAREAMANAGER_H

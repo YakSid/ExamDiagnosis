@@ -26,6 +26,7 @@ CONFIG += c++11
 
 SOURCES += \
         careamanager.cpp \
+        ccell.cpp \
         ccrypter.cpp \
         cjsonmanager.cpp \
         cvisualblock.cpp \
@@ -34,6 +35,7 @@ SOURCES += \
 
 HEADERS += \
         careamanager.h \
+        ccell.h \
         ccrypter.h \
         cjsonmanager.h \
         cstructs.h \

@@ -1,4 +1,6 @@
 #include "careamanager.h"
+#include <QDateTime>
+#include <random>
 
 CAreaManager::CAreaManager(QWidget *parent) : QGraphicsView(parent)
 {
@@ -38,7 +40,6 @@ void CAreaManager::init()
 void CAreaManager::test()
 {
     QFont wordsFont("times", 10);
-    // TODO: Сделать размещение слов в стартовый пул
     QStringList words = {
         "Ишемическая болезнь сердца",
         "Крупноочаговый кардиосклероз нижней стенки левого желудочка",
@@ -61,12 +62,20 @@ void CAreaManager::test()
         "Атеросклероз аорты (3 степень, 4 стадия)",
         "Хронический панкреатит, ремиссия",
     };
+
+    //Случайная генерация основанная на Вихре Мерсенна
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int<int> ui(0, words.count() - 1);
+    for (int i = 0; i < words.count() - 1; i++) {
+        words.swap(ui(gen), ui(gen));
+    }
+
     for (int i = 0; i < words.count(); i++) {
         auto vBlock = new CVisualBlock(words.at(i), wordsFont);
         m_vBlocks.append(vBlock);
         m_scene->addItem(vBlock);
-        // TODO: Сделать размещение пула стартовых слов случайным образом
-        vBlock->setPos(5, m_poolStarts);
+        vBlock->setPos(0, m_poolStarts);
         vBlock->goOnFreePlaceOnScene();
         connect(vBlock, &CVisualBlock::s_blockMoved, this, &CAreaManager::blockMoved);
     }

@@ -1,6 +1,7 @@
 #include "cvisualblock.h"
 #include <QLinearGradient>
 #include "cstructs.h"
+#include <QDebug>
 
 const qint32 ONE_WIDTH_MARGIN = 10; //Отступ с одной стороны
 
@@ -39,6 +40,8 @@ void CVisualBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     Q_UNUSED(widget);
     painter->setPen(Qt::black);
     painter->setRenderHint(QPainter::Antialiasing);
+    if (m_state != EBlockState::none)
+        qDebug() << "got";
     painter->setBrush(_makeGradient(m_state));
     painter->drawRoundedRect(QRectF(0, 0, m_width, BLOCK_HEIGHT), 6, 6, Qt::AbsoluteSize);
 
@@ -83,22 +86,6 @@ void CVisualBlock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     // Автоперемещение на нужную позицию рядом
     goOnFreePlaceOnScene();
-
-    //! Список клеток, которые стали занятыми
-    QList<CCell *> collidingCells;
-    for (auto item : collidingItems()) {
-        auto cell = static_cast<CCell *>(item);
-        collidingCells.append(cell);
-        if (!m_busyCells.contains(cell)) {
-            cell->setBusy(true);
-        }
-    }
-    for (auto busyCell : m_busyCells) {
-        if (!collidingCells.contains(busyCell)) {
-            busyCell->setBusy(false);
-        }
-    }
-    m_busyCells = collidingCells;
 }
 
 qint32 CVisualBlock::_countWidthForText()
@@ -159,6 +146,22 @@ bool CVisualBlock::goOnFreePlaceOnScene()
             }
         }
     }
+
+    //! Список клеток, которые стали занятыми
+    QList<CCell *> collidingCells;
+    for (auto item : collidingItems()) {
+        auto cell = static_cast<CCell *>(item);
+        collidingCells.append(cell);
+        if (!m_busyCells.contains(cell)) {
+            cell->setBusy(true);
+        }
+    }
+    for (auto busyCell : m_busyCells) {
+        if (!collidingCells.contains(busyCell)) {
+            busyCell->setBusy(false);
+        }
+    }
+    m_busyCells = collidingCells;
 
     // TODO: Обработать ситуацию, когда место на сцене заканчивается
     return true;

@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "ccrypter.h"
 #include <QDebug>
+#include <QCursor>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -27,7 +28,9 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
+    this->setCursor(Qt::WaitCursor);
     m_areaMg->test();
+    this->setCursor(Qt::ArrowCursor);
 }
 
 void MainWindow::on_pushButton_3_clicked()

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "careamanager.h"
+#include "cmenu.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,7 +24,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    CAreaManager *m_areaMg;
+    CAreaManager *m_areaMg { nullptr };
+    CMenu *m_menu { nullptr };
 };
 
 #endif // MAINWINDOW_H

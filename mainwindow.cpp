@@ -6,6 +6,18 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    m_menu = new CMenu();
+    m_menu->setModal(true);
+    m_menu->exec();
+
+    switch (m_menu->getMode()) {
+    default:
+    case 0:
+        exit(0);
+    case 1:
+        break;
+    }
+
     ui->setupUi(this);
     m_areaMg = new CAreaManager();
     ui->groupBox->layout()->addWidget(m_areaMg);

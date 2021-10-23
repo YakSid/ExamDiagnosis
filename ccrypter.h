@@ -4,7 +4,7 @@
 #include <QCryptographicHash>
 #include <QObject>
 
-static const QString kEncryptorString = QString("EXAM DIAGNO"); // here is key to crypt/decrypt QString;
+static const QString kEncryptorString = QString("EXAM DIAGNO"); // here is key to crypt/decrypt QString
 
 class CCrypter : public QObject
 {

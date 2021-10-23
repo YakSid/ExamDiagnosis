@@ -29,6 +29,8 @@ SOURCES += \
         ccell.cpp \
         ccrypter.cpp \
         cjsonmanager.cpp \
+        cmenu.cpp \
+        cmenusettings.cpp \
         cvisualblock.cpp \
         main.cpp \
         mainwindow.cpp
@@ -38,11 +40,15 @@ HEADERS += \
         ccell.h \
         ccrypter.h \
         cjsonmanager.h \
+        cmenu.h \
+        cmenusettings.h \
         cstructs.h \
         cvisualblock.h \
         mainwindow.h
 
 FORMS += \
+        cmenu.ui \
+        cmenusettings.ui \
         mainwindow.ui
 
 # Default rules for deployment.

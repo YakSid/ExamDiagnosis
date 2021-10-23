@@ -18,6 +18,7 @@ public:
 
     quint8 getMode() { return m_mode; }
     void updateMode() { m_mode = 0; }
+    QString getPathToSelectedTest();
 
 private slots:
     void on_pb_settings_clicked();
@@ -36,6 +37,8 @@ private:
 
     quint8 m_mode = 0;
     QString m_pathToTests;
+    //! Путь к выбранному тесту
+    QString m_selectedPath;
 };
 
 #endif // CMENU_H

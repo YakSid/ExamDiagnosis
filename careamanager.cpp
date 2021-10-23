@@ -12,8 +12,6 @@ CAreaManager::CAreaManager(QWidget *parent) : QGraphicsView(parent)
 
 CAreaManager::~CAreaManager() {}
 
-// TODO: добавить начало: выбор задачи и переход к следующей
-
 // TODO: выделять над каким блоком сейчас слово и если отпустить мышь, то поставить на ближайшую свободную позицию в
 // этот блок
 

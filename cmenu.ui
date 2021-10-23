@@ -22,6 +22,13 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Список тестов</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -33,6 +40,18 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Путь к папке:</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pb_settings">
@@ -49,7 +68,13 @@
     </layout>
    </item>
    <item>
-    <widget class="QListWidget" name="lw_tests"/>
+    <widget class="QListWidget" name="lw_tests">
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">

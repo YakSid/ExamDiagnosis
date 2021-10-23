@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         break;
     }
 
+    auto example = CJsonManager::loadFromFile(m_menu->getPathToSelectedTest());
+
     ui->setupUi(this);
     m_areaMg = new CAreaManager();
     ui->groupBox->layout()->addWidget(m_areaMg);

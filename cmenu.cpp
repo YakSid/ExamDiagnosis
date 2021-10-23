@@ -1,9 +1,10 @@
 #include "cmenu.h"
 #include "ui_cmenu.h"
 
+#include <QDir>
 #include <QFile>
 #include <QTextStream>
-#include <QDebug>
+#include <QMessageBox>
 
 const auto STORAGE_FILENAME = QStringLiteral("path.ini");
 
@@ -27,6 +28,11 @@ CMenu::~CMenu()
     delete ui;
 }
 
+QString CMenu::getPathToSelectedTest()
+{
+    return m_selectedPath;
+}
+
 void CMenu::on_pb_settings_clicked()
 {
     m_settings->setModal(true);
@@ -41,13 +47,32 @@ void CMenu::on_pb_settings_clicked()
 
 void CMenu::on_pb_startTest_clicked()
 {
+    if (ui->lw_tests->selectedItems().isEmpty()) {
+        QMessageBox msg;
+        msg.setText("Выберите тест");
+        msg.setStyleSheet("QLabel{min-width: 100px; font-size: 12px;}");
+        msg.exec();
+        return;
+    }
+
+    m_selectedPath = m_pathToTests + "/" + ui->lw_tests->selectedItems().first()->text() + ".json";
     m_mode = 1;
     close();
 }
 
 void CMenu::_fillLw(QString path)
 {
-    // TODO: СЕЙЧАС открывать правильный тест выбранный в lw, не откр если не выбр
+    ui->lw_tests->clear();
+
+    const QDir source(path);
+    if (!source.exists())
+        return;
+    const QStringList files = source.entryList(QStringList() << "*.json", QDir::Files);
+
+    for (auto name : files) {
+        name.chop(5);
+        ui->lw_tests->addItem(name);
+    }
 }
 
 void CMenu::_savePath(QString path)

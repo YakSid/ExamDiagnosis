@@ -16,6 +16,8 @@ public:
     void init();
 
     void test();
+    //! Добавить на сцену блоки со словами в пул слов (внизу)
+    void addWords(QStringList words);
 
     void test2();
 

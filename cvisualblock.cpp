@@ -163,6 +163,6 @@ bool CVisualBlock::goOnFreePlaceOnScene()
     }
     m_busyCells = collidingCells;
 
-    // TODO: Обработать ситуацию, когда место на сцене заканчивается
+    // TODO: [block move] Обработать ситуацию, когда место на сцене заканчивается
     return true;
 }

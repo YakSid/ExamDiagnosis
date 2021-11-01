@@ -10,14 +10,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_menu->setModal(true);
     m_menu->exec();
 
-    switch (m_menu->getMode()) {
-    default:
-    case 0:
+    if (m_menu->getMode() != 1)
         exit(0);
-    case 1:
-        break;
-    }
-
     auto example = CJsonManager::loadFromFile(m_menu->getPathToSelectedTest());
 
     ui->setupUi(this);
@@ -27,24 +21,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_areaMg->setCacheMode(QGraphicsView::CacheBackground);
     m_areaMg->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     m_areaMg->setSceneRect(0, 0, 950, 650);
+    m_areaMg->init();
+
+    QStringList words;
+    for (auto word : example.words) {
+        words.append(word->text);
+    }
+    // m_areaMg->addWords(words); // NOTE: если будет удобнее, то добавлять вместе с ID
+    // NOTE: нижнюю строчку потом заменить на верхнюю
+    m_areaMg->test();
+
+    // TODO: 2. Переименовать клавиши из ui. По нажатию сделать проверку (m_area test 2) см. note
+    // TODO: 4. Показать правильные возможные рузельтаты (немодальным окном, в геометрии указав открыть слева от окна)
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::on_pushButton_clicked()
-{
-    // BUG: почему-то если в конструкторе, то неправильно считывает размер
-    m_areaMg->init();
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    this->setCursor(Qt::WaitCursor);
-    m_areaMg->test();
-    this->setCursor(Qt::ArrowCursor);
 }
 
 void MainWindow::on_pushButton_3_clicked()

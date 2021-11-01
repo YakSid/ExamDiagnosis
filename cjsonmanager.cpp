@@ -48,7 +48,7 @@ void CJsonManager::saveToFile(QString filename, const SExample *example)
     QFile jFile(filename);
     if (!jFile.open(QIODevice::WriteOnly))
         return;
-    // NOTE: добавляю "4" в начало после кодирования в base64, чтобы перебор кодировок в декодере не выдал base64
+    // Добавляю "4" в начало после кодирования в base64, чтобы перебор кодировок в декодере не выдал base64
     jFile.write("4" + jDoc->toJson().toBase64());
     jFile.close();
 }

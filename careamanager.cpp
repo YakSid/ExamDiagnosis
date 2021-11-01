@@ -12,10 +12,8 @@ CAreaManager::CAreaManager(QWidget *parent) : QGraphicsView(parent)
 
 CAreaManager::~CAreaManager() {}
 
-// TODO: выделять над каким блоком сейчас слово и если отпустить мышь, то поставить на ближайшую свободную позицию в
-// этот блок
-
-// TODO: при проверке ответов немодальным окном открывать правильные варианты ответа
+// TODO: [block move] выделять над каким блоком сейчас слово и если отпустить мышь, то поставить на ближайшую свободную
+// позицию в этот блок
 
 void CAreaManager::init()
 {
@@ -45,6 +43,8 @@ void CAreaManager::init()
 void CAreaManager::test()
 {
     QFont wordsFont("times", 10);
+    /*QStringList words = { "1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",
+                          "10", "11", "12", "13", "14", "15", "16", "17", "18" };*/
     QStringList words = {
         "Ишемическая болезнь сердца",
         "Крупноочаговый кардиосклероз нижней стенки левого желудочка",
@@ -86,9 +86,30 @@ void CAreaManager::test()
     }
 }
 
+void CAreaManager::addWords(QStringList words)
+{
+    QFont wordsFont("times", 10);
+    //Случайная генерация основанная на Вихре Мерсенна
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int<int> ui(0, words.count() - 1);
+    for (int i = 0; i < words.count() - 1; i++) {
+        words.swap(ui(gen), ui(gen));
+    }
+
+    // TODO: 1. Починить методы расстановки
+    for (int i = 0; i < words.count(); i++) {
+        auto vBlock = new CVisualBlock(words.at(i), wordsFont);
+        m_vBlocks.append(vBlock);
+        m_scene->addItem(vBlock);
+        vBlock->setPos(0, m_poolStarts);
+        vBlock->goOnFreePlaceOnScene();
+        connect(vBlock, &CVisualBlock::s_blockMoved, this, &CAreaManager::blockMoved);
+    }
+}
+
 void CAreaManager::test2()
 {
-    // TODO: рассчитать на правильной позиции ли стоит блок
     ///Пока что на рандом раскрашиваю для проверки
     qint32 i = 0;
     for (auto vBlock : m_vBlocks) {
@@ -112,7 +133,7 @@ void CAreaManager::test2()
 
 void CAreaManager::blockMoved()
 {
-    // TODO: Сдвинуть все блоки влево и вверх если освободилось место
+    // TODO: [block move] Сдвинуть все блоки влево и вверх если освободилось место
 }
 
 void CAreaManager::_buildMatrix()

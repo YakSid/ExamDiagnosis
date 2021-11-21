@@ -7,8 +7,9 @@ const qint32 ONE_WIDTH_MARGIN = 10; //Отступ с одной стороны
 
 CVisualBlock::CVisualBlock(QObject *parent) : QObject(parent) {}
 
-CVisualBlock::CVisualBlock(QString text, QFont font, const QList<QList<CCell *> *> &matrix, QObject *parent)
-    : QObject(parent), m_font(font), m_matrix(matrix)
+CVisualBlock::CVisualBlock(qint32 wordId, QString text, QFont font, const QList<QList<CCell *> *> &matrix,
+                           QObject *parent)
+    : QObject(parent), m_wordId(wordId), m_font(font), m_matrix(matrix)
 {
     const qint32 blockLettersLimit = 35;
     if (text.count() > blockLettersLimit) {
@@ -203,40 +204,6 @@ void CVisualBlock::_align(const QPointF &pos)
     } else {
         this->setX(pos.x() - (static_cast<qint32>(pos.x()) % ONE_WIDTH));
     }
-}
-
-bool CVisualBlock::goOnFreePlaceOnScene()
-{
-    //    bool positionFound = false;
-    //    QList<QGraphicsItem *> collItems;
-    //    while (!positionFound) {
-    //        collItems = collidingItems();
-    //        positionFound = true;
-    //        for (auto collItem : collItems) {
-    //            auto cell = static_cast<CCell *>(collItem);
-    //            if (cell) {
-    //                if (cell->isBusy()) {
-    //                    //Клетка занята ищем новое место
-    //                    positionFound = false;
-    //                    if (SCENE_WIDTH - m_width - this->pos().x() > 0) {
-    //                        //Место справа есть
-    //                        this->setX(this->pos().x() + ONE_WIDTH);
-    //                        break;
-    //                    } else {
-    //                        //Места справа нет
-    //                        this->setY(this->pos().y() + ONE_HEIGHT);
-    //                        this->setX(0);
-    //                        break;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    _changeBusyCells();
-
-    //    // TODO: [block move] Обработать ситуацию, когда место на сцене заканчивается
-    return true;
 }
 
 void CVisualBlock::setPosition(const QPointF &pos)

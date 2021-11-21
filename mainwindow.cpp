@@ -44,20 +44,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         }
     }
 
-    QStringList words;
+    //! Отбираем нужные слова
+    QList<SWord *> words;
     for (auto word : example.words) {
         if (word->id >= minId)
             if (usedIds.contains(word->id))
-                words.append(word->text);
+                words.append(word);
     }
 
-    m_areaMg->addWords(words); // NOTE: если будет удобнее, то добавлять вместе с ID
-    // NOTE: нижнюю строчку потом заменить на верхнюю
-    //     m_areaMg->test();
-
-    // TODO: 2. Переименовать клавиши из ui. По нажатию сделать проверку см. note
-    // TODO: 3. Показать правильные возможные результаты (немодальным окном, в геометрии указав открыть слева от окна)
-    //Возможно окрашивать только неверные в красный, а остальные оставлять?
+    m_areaMg->addWords(words);
 }
 
 MainWindow::~MainWindow()
@@ -65,4 +60,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pb_checkAnswer_clicked() {}
+void MainWindow::on_pb_checkAnswer_clicked()
+{
+    //Отображаем окно с правильным результатами
+    // cresult
+
+    // Подвдодим итог - окрашиваем наши ответы в сигнализирующие цвета
+    m_areaMg->summarize();
+}

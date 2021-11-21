@@ -15,14 +15,12 @@ class CAreaManager : public QGraphicsView
 public:
     explicit CAreaManager(QWidget *parent = nullptr);
     ~CAreaManager();
+    //! Построить матрицу, установить надписи
     void init();
-
-    //    void test();
     //! Добавить на сцену блоки со словами в пул слов (внизу)
-    void addWords(QStringList words);
-
-public slots:
-    void blockMoved();
+    void addWords(QList<SWord *> words);
+    //! Составить получившуюся комбинацию слов и окрасить верные/неверные позиции
+    QString summarize();
 
 private:
     void _buildMatrix();

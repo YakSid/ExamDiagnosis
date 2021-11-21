@@ -31,6 +31,7 @@ SOURCES += \
         cjsonmanager.cpp \
         cmenu.cpp \
         cmenusettings.cpp \
+        cresult.cpp \
         cvisualblock.cpp \
         main.cpp \
         mainwindow.cpp
@@ -42,6 +43,7 @@ HEADERS += \
         cjsonmanager.h \
         cmenu.h \
         cmenusettings.h \
+        cresult.h \
         cstructs.h \
         cvisualblock.h \
         mainwindow.h
@@ -49,6 +51,7 @@ HEADERS += \
 FORMS += \
         cmenu.ui \
         cmenusettings.ui \
+        cresult.ui \
         mainwindow.ui
 
 # Default rules for deployment.

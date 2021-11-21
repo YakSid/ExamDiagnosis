@@ -15,9 +15,6 @@ CAreaManager::~CAreaManager()
     qDeleteAll(m_matrix);
 }
 
-// TODO: [block move] выделять над каким блоком сейчас слово и если отпустить мышь, то поставить на ближайшую свободную
-// позицию в этот блок
-
 void CAreaManager::init()
 {
     _buildMatrix();
@@ -39,7 +36,7 @@ void CAreaManager::init()
         } else {
             auto text = m_scene->addText(DIS_BLOCK.at(i), disFont);
             text->setPos(0, i * (5 * (BLOCK_HEIGHT + YMARGIN_BETWEEN_CELLS)) - 3);
-            // TODO: добавить занятость клеткам с текстом
+            // Добавить занятость клеткам с текстом
             for (auto item : text->collidingItems()) {
                 auto cell = static_cast<CCell *>(item);
                 cell->setBusy(true);
@@ -48,51 +45,7 @@ void CAreaManager::init()
     }
 }
 
-// void CAreaManager::test()
-//{
-//    QFont wordsFont("times", 10);
-//    /*QStringList words = { "1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",
-//                          "10", "11", "12", "13", "14", "15", "16", "17", "18" };*/
-//    QStringList words = {
-//        "Ишемическая болезнь сердца",
-//        "Крупноочаговый кардиосклероз нижней стенки левого желудочка",
-//        "Стенозирующий атеросклероз коронарных артерий (3 степень 4 стадия стеноз до 50%)",
-//        "Гипертоническая болезнь: гипертрофия миокарда преимущественно левого желудочка (масса сердца – 570 г, толщина
-//        " "миокарда левого желудочка – 1,9 см, правого – 0,3 см, межжелудочковой перегородки – 1,9 см)", "Сахарный
-//        диабет 2 типа", "Диабетическая ангиопатия", "Диабетическая нефропатия (см. также клинические данные)",
-//        "Ожирение",
-//        "Застойная сердечная недостаточность",
-//        "«Мускатная» печень",
-//        "Цианотическая индурация селезенки и почек",
-//        "Двусторонний гидроторакс (1400 мл)",
-//        "Гидроперикард (200 мл)",
-//        "Асцит (8000 мл)",
-//        "Отёки подкожной клетчатки туловища и конечностей",
-//        "Дистрофические изменения внутренних органов и острое венозное полнокровие",
-//        "Отёк лёгких",
-//        "Атеросклероз аорты (3 степень, 4 стадия)",
-//        "Хронический панкреатит, ремиссия",
-//    };
-
-//    //Случайная генерация основанная на Вихре Мерсенна
-//    std::random_device rd;
-//    std::mt19937 gen(rd());
-//    std::uniform_int<int> ui(0, words.count() - 1);
-//    for (int i = 0; i < words.count() - 1; i++) {
-//        words.swap(ui(gen), ui(gen));
-//    }
-
-//    /*for (int i = 0; i < words.count(); i++) {
-//        auto vBlock = new CVisualBlock(words.at(i), wordsFont);
-//        m_vBlocks.append(vBlock);
-//        m_scene->addItem(vBlock);
-//        vBlock->setPos(0, m_poolStarts);
-//        vBlock->goOnFreePlaceOnScene();
-//        connect(vBlock, &CVisualBlock::s_blockMoved, this, &CAreaManager::blockMoved);
-//    }*/
-//}
-
-void CAreaManager::addWords(QStringList words)
+void CAreaManager::addWords(QList<SWord *> words)
 {
     QFont wordsFont("times", 10);
     //Случайная генерация основанная на Вихре Мерсенна
@@ -104,18 +57,18 @@ void CAreaManager::addWords(QStringList words)
     }
 
     for (int i = 0; i < words.count(); i++) {
-        auto vBlock = new CVisualBlock(words.at(i), wordsFont, m_matrix);
+        auto vBlock = new CVisualBlock(words.at(i)->id, words.at(i)->text, wordsFont, m_matrix);
         m_vBlocks.append(vBlock);
         m_scene->addItem(vBlock);
         auto pos = _findFreePlaceForBlock(vBlock->getWidth());
         vBlock->setPosition(pos);
-        connect(vBlock, &CVisualBlock::s_blockMoved, this, &CAreaManager::blockMoved);
     }
 }
 
-void CAreaManager::blockMoved()
+QString CAreaManager::summarize()
 {
-    // TODO: [block move] Сдвинуть все блоки влево и вверх если освободилось место
+    // TODO: СЕЙЧАС окрашивание
+    //Показать правильные возможные результаты (немодальным окном, в геометрии указав открыть слева от окна)
 }
 
 void CAreaManager::_buildMatrix()

@@ -14,17 +14,13 @@ class CVisualBlock : public QObject, public QGraphicsItem
     Q_OBJECT
 public:
     explicit CVisualBlock(QObject *parent = nullptr);
-    CVisualBlock(QString text, QFont font, const QList<QList<CCell *> *> &matrix, QObject *parent = nullptr);
+    CVisualBlock(qint32 wordId, QString text, QFont font, const QList<QList<CCell *> *> &matrix,
+                 QObject *parent = nullptr);
     ~CVisualBlock();
     void setState(EBlockState state);
     quint32 getWidth() { return m_width; }
-    //! Перемещение на ближайшую свободную позицию на сцене
-    bool goOnFreePlaceOnScene();
     //! Мой метод, отличающийся от классического использованием busyCells
     void setPosition(const QPointF &pos);
-
-signals:
-    void s_blockMoved();
 
 private:
     QRectF boundingRect() const;
@@ -45,6 +41,8 @@ private:
     void _align(const QPointF &pos);
 
 private:
+    //! id слова, которое отображает этот блок
+    qint32 m_wordId { -1 };
     //! Состояние блока в зависимости от расположения
     EBlockState m_state { EBlockState::none };
 

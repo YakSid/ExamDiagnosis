@@ -7,7 +7,8 @@ const qint32 ONE_WIDTH_MARGIN = 10; //Отступ с одной стороны
 
 CVisualBlock::CVisualBlock(QObject *parent) : QObject(parent) {}
 
-CVisualBlock::CVisualBlock(QString text, QFont font, QObject *parent) : QObject(parent)
+CVisualBlock::CVisualBlock(QString text, QFont font, const QList<QList<CCell *> *> &matrix, QObject *parent)
+    : QObject(parent), m_font(font), m_matrix(matrix)
 {
     const qint32 blockLettersLimit = 35;
     if (text.count() > blockLettersLimit) {
@@ -46,7 +47,6 @@ CVisualBlock::CVisualBlock(QString text, QFont font, QObject *parent) : QObject(
     }
 
     m_text = text;
-    m_font = font;
     auto width = _countWidthForText();
 
     if (width > BLOCK_WIDTH) {
@@ -102,22 +102,11 @@ void CVisualBlock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event);
     this->setCursor(QCursor(Qt::ArrowCursor));
 
-    //Ровнение по Y
-    if (static_cast<qint32>(this->pos().y()) % ONE_HEIGHT > (ONE_HEIGHT / 2)) {
-        this->setY(this->pos().y() + (ONE_HEIGHT - static_cast<qint32>(this->pos().y()) % ONE_HEIGHT));
-    } else {
-        this->setY(this->pos().y() - (static_cast<qint32>(this->pos().y()) % ONE_HEIGHT));
-    }
-    //Ровнение по X
-    if (static_cast<qint32>(this->pos().x()) % ONE_WIDTH > (ONE_WIDTH / 2)) {
-        this->setX(this->pos().x() + (ONE_WIDTH - static_cast<qint32>(this->pos().x()) % ONE_WIDTH));
-    } else {
-        this->setX(this->pos().x() - (static_cast<qint32>(this->pos().x()) % ONE_WIDTH));
-    }
+    _align(this->pos());
 
-    // Автоперемещение на нужную позицию рядом //TODO: ПЕРЕДЕЛАТЬ!
-    //    goOnFreePlaceOnScene();
-    _changeBusyCells();
+    // Автоперемещение на нужную позицию рядом
+    auto point = _findFreePlace();
+    this->setPosition(point);
 }
 
 qint32 CVisualBlock::_countWidthForText()
@@ -170,6 +159,52 @@ void CVisualBlock::_changeBusyCells()
     m_busyCells = collidingCells;
 }
 
+QPoint CVisualBlock::_findFreePlace()
+{
+    //! Сколько нужно клеток для слова
+    quint32 needCellsCount = m_width / (BLOCK_WIDTH + XMARGIN_BETWEEN_CELLS) + 2;
+    //! Сколько свободных клеток подряд нашли
+    quint32 foundFreeCells = 0;
+
+    for (auto line : m_matrix) {
+        //Если ниже пула слов, то работаем с линией
+        if (line->first()->y() > this->y() - BLOCK_HEIGHT - YMARGIN_BETWEEN_CELLS) {
+            //Проход по каждой линии в пуле слов
+            foundFreeCells = 0;
+            for (auto cell : *line) {
+                if (cell->isBusy()) {
+                    foundFreeCells = 0;
+                } else {
+                    foundFreeCells++;
+                }
+
+                if (foundFreeCells == needCellsCount) {
+                    //Возвращаем точку первой клетки
+                    return QPoint(cell->x() - m_width, cell->y());
+                }
+            }
+        }
+    }
+
+    return QPoint();
+}
+
+void CVisualBlock::_align(const QPointF &pos)
+{
+    //Ровнение по Y
+    if (static_cast<qint32>(pos.y()) % ONE_HEIGHT > (ONE_HEIGHT / 2)) {
+        this->setY(pos.y() + (ONE_HEIGHT - static_cast<qint32>(pos.y()) % ONE_HEIGHT));
+    } else {
+        this->setY(pos.y() - (static_cast<qint32>(pos.y()) % ONE_HEIGHT));
+    }
+    //Ровнение по X
+    if (static_cast<qint32>(pos.x()) % ONE_WIDTH > (ONE_WIDTH / 2)) {
+        this->setX(pos.x() + (ONE_WIDTH - static_cast<qint32>(pos.x()) % ONE_WIDTH));
+    } else {
+        this->setX(pos.x() - (static_cast<qint32>(pos.x()) % ONE_WIDTH));
+    }
+}
+
 bool CVisualBlock::goOnFreePlaceOnScene()
 {
     //    bool positionFound = false;
@@ -206,18 +241,6 @@ bool CVisualBlock::goOnFreePlaceOnScene()
 
 void CVisualBlock::setPosition(const QPointF &pos)
 {
-    //Ровнение по Y
-    if (static_cast<qint32>(pos.y()) % ONE_HEIGHT > (ONE_HEIGHT / 2)) {
-        this->setY(pos.y() + (ONE_HEIGHT - static_cast<qint32>(pos.y()) % ONE_HEIGHT));
-    } else {
-        this->setY(pos.y() - (static_cast<qint32>(pos.y()) % ONE_HEIGHT));
-    }
-    //Ровнение по X
-    if (static_cast<qint32>(pos.x()) % ONE_WIDTH > (ONE_WIDTH / 2)) {
-        this->setX(pos.x() + (ONE_WIDTH - static_cast<qint32>(pos.x()) % ONE_WIDTH));
-    } else {
-        this->setX(pos.x() - (static_cast<qint32>(pos.x()) % ONE_WIDTH));
-    }
-
+    _align(pos);
     _changeBusyCells();
 }

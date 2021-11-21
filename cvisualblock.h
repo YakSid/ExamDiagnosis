@@ -11,11 +11,10 @@
 
 class CVisualBlock : public QObject, public QGraphicsItem
 {
-    // TODO: добавил tooltip, чтобы в несколько строк появлялся текст
     Q_OBJECT
 public:
     explicit CVisualBlock(QObject *parent = nullptr);
-    CVisualBlock(QString text, QFont font, QObject *parent = nullptr);
+    CVisualBlock(QString text, QFont font, const QList<QList<CCell *> *> &matrix, QObject *parent = nullptr);
     ~CVisualBlock();
     void setState(EBlockState state);
     quint32 getWidth() { return m_width; }
@@ -40,6 +39,10 @@ private:
     QLinearGradient _makeGradient(EBlockState state);
     //! Сделать новые клетки занятыми, записать, а старые выписать и сделать свободными
     void _changeBusyCells();
+    //! Найти свободное место правее и если нужно ниже
+    QPoint _findFreePlace();
+    //! Выровнять расположение блока относительно сетки
+    void _align(const QPointF &pos);
 
 private:
     //! Состояние блока в зависимости от расположения
@@ -53,6 +56,8 @@ private:
     QPointF m_catchPos;
     //! Список клеток на которых расположен
     QList<CCell *> m_busyCells;
+    //! Указатель на матрицу клеток, на которых распологаются объекты vBlock
+    QList<QList<CCell *> *> m_matrix;
 };
 
 #endif // CVISUALBLOCK_H

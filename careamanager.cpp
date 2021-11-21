@@ -38,7 +38,12 @@ void CAreaManager::init()
             m_scene->addLine(0, m_poolStarts, SCENE_WIDTH, m_poolStarts);
         } else {
             auto text = m_scene->addText(DIS_BLOCK.at(i), disFont);
-            text->setPos(0, i * (5 * (BLOCK_HEIGHT + YMARGIN_BETWEEN_CELLS)) - 5);
+            text->setPos(0, i * (5 * (BLOCK_HEIGHT + YMARGIN_BETWEEN_CELLS)) - 3);
+            // TODO: добавить занятость клеткам с текстом
+            for (auto item : text->collidingItems()) {
+                auto cell = static_cast<CCell *>(item);
+                cell->setBusy(true);
+            }
         }
     }
 }
@@ -98,15 +103,12 @@ void CAreaManager::addWords(QStringList words)
         words.swap(ui(gen), ui(gen));
     }
 
-    // TODO: 1. Починить методы расстановки
     for (int i = 0; i < words.count(); i++) {
-        auto vBlock = new CVisualBlock(words.at(i), wordsFont);
+        auto vBlock = new CVisualBlock(words.at(i), wordsFont, m_matrix);
         m_vBlocks.append(vBlock);
         m_scene->addItem(vBlock);
-        // vBlock->setPos(QPoint(0, 0) /*m_poolStarts*/); //?
         auto pos = _findFreePlaceForBlock(vBlock->getWidth());
         vBlock->setPosition(pos);
-        // vBlock->goOnFreePlaceOnScene();
         connect(vBlock, &CVisualBlock::s_blockMoved, this, &CAreaManager::blockMoved);
     }
 }

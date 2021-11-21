@@ -11,19 +11,21 @@
 
 class CVisualBlock : public QObject, public QGraphicsItem
 {
+    // TODO: добавил tooltip, чтобы в несколько строк появлялся текст
     Q_OBJECT
 public:
     explicit CVisualBlock(QObject *parent = nullptr);
     CVisualBlock(QString text, QFont font, QObject *parent = nullptr);
     ~CVisualBlock();
     void setState(EBlockState state);
+    quint32 getWidth() { return m_width; }
     //! Перемещение на ближайшую свободную позицию на сцене
     bool goOnFreePlaceOnScene();
+    //! Мой метод, отличающийся от классического использованием busyCells
+    void setPosition(const QPointF &pos);
 
 signals:
     void s_blockMoved();
-
-public slots:
 
 private:
     QRectF boundingRect() const;
@@ -36,6 +38,8 @@ private:
     qint32 _countWidthForText();
     //! Создать градиент
     QLinearGradient _makeGradient(EBlockState state);
+    //! Сделать новые клетки занятыми, записать, а старые выписать и сделать свободными
+    void _changeBusyCells();
 
 private:
     //! Состояние блока в зависимости от расположения

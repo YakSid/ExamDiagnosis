@@ -9,9 +9,46 @@ CVisualBlock::CVisualBlock(QObject *parent) : QObject(parent) {}
 
 CVisualBlock::CVisualBlock(QString text, QFont font, QObject *parent) : QObject(parent)
 {
-    m_font = font;
+    const qint32 blockLettersLimit = 35;
+    if (text.count() > blockLettersLimit) {
+        QString tooltipText = text;
+        //Ищем с какого пробела обрезать текст для отображения
+        qint32 spaceIndex = text.indexOf(' ', blockLettersLimit);
+        //Если пробелов после лимита не найдено, то значит слов немного и можно не обрезать
+        if (spaceIndex != -1) {
+            //Отбрасываем лишнюю часть вместе с пробелом и записываем в m_text
+            text.chop(text.size() - spaceIndex);
+            text += "...";
+            m_text = text;
+
+            //Редактурем сохранённый тултип текст
+            qint32 currentLine = 1;
+            //! Ищем ли мы сейчас пробел, чтобы подменить его на перенос строки
+            bool lookinfForSpace = false;
+            //! Превышение длинны предыдущей строки над лимитом
+            qint32 excessInPrevLine = 0;
+            for (int i = 0; i < tooltipText.length(); i++) {
+                if (lookinfForSpace) {
+                    if (tooltipText.at(i) == ' ') {
+                        tooltipText.replace(i, 1, '\n');
+                        lookinfForSpace = false;
+                        currentLine++;
+                        excessInPrevLine = 0;
+                    } else {
+                        excessInPrevLine++;
+                    }
+                } else if (i > blockLettersLimit * currentLine + excessInPrevLine) {
+                    lookinfForSpace = true;
+                }
+            }
+            this->setToolTip(tooltipText);
+        }
+    }
+
     m_text = text;
+    m_font = font;
     auto width = _countWidthForText();
+
     if (width > BLOCK_WIDTH) {
         m_width = static_cast<quint32>(width);
     } else {
@@ -40,14 +77,12 @@ void CVisualBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     Q_UNUSED(widget);
     painter->setPen(Qt::black);
     painter->setRenderHint(QPainter::Antialiasing);
-    if (m_state != EBlockState::none)
-        qDebug() << "got";
     painter->setBrush(_makeGradient(m_state));
     painter->drawRoundedRect(QRectF(0, 0, m_width, BLOCK_HEIGHT), 6, 6, Qt::AbsoluteSize);
 
     painter->setFont(m_font);
     painter->setBrush(Qt::black);
-    painter->drawText(QRect(0, 0, m_width, BLOCK_HEIGHT), Qt::AlignCenter, m_text);
+    painter->drawText(QRect(0, 0, static_cast<qint32>(m_width), BLOCK_HEIGHT), Qt::AlignCenter, m_text);
 }
 
 void CVisualBlock::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -60,10 +95,6 @@ void CVisualBlock::mousePressEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event);
     m_catchPos = event->pos();
     this->setCursor(QCursor(Qt::ClosedHandCursor));
-
-    for (auto busyCell : m_busyCells) {
-        busyCell->setBusy(false);
-    }
 }
 
 void CVisualBlock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -84,8 +115,9 @@ void CVisualBlock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         this->setX(this->pos().x() - (static_cast<qint32>(this->pos().x()) % ONE_WIDTH));
     }
 
-    // Автоперемещение на нужную позицию рядом
-    goOnFreePlaceOnScene();
+    // Автоперемещение на нужную позицию рядом //TODO: ПЕРЕДЕЛАТЬ!
+    //    goOnFreePlaceOnScene();
+    _changeBusyCells();
 }
 
 qint32 CVisualBlock::_countWidthForText()
@@ -119,34 +151,8 @@ QLinearGradient CVisualBlock::_makeGradient(EBlockState state)
     return gradient;
 }
 
-bool CVisualBlock::goOnFreePlaceOnScene()
+void CVisualBlock::_changeBusyCells()
 {
-    bool positionFound = false;
-    QList<QGraphicsItem *> collItems;
-    while (!positionFound) {
-        collItems = collidingItems();
-        positionFound = true;
-        for (auto collItem : collItems) {
-            auto cell = static_cast<CCell *>(collItem);
-            if (cell) {
-                if (cell->isBusy()) {
-                    //Клетка занята ищем новое место
-                    positionFound = false;
-                    if (SCENE_WIDTH - m_width - this->pos().x() > 0) {
-                        //Место справа есть
-                        this->setX(this->pos().x() + ONE_WIDTH);
-                        break;
-                    } else {
-                        //Места справа нет
-                        this->setY(this->pos().y() + ONE_HEIGHT);
-                        this->setX(0);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     //! Список клеток, которые стали занятыми
     QList<CCell *> collidingCells;
     for (auto item : collidingItems()) {
@@ -162,7 +168,56 @@ bool CVisualBlock::goOnFreePlaceOnScene()
         }
     }
     m_busyCells = collidingCells;
+}
 
-    // TODO: [block move] Обработать ситуацию, когда место на сцене заканчивается
+bool CVisualBlock::goOnFreePlaceOnScene()
+{
+    //    bool positionFound = false;
+    //    QList<QGraphicsItem *> collItems;
+    //    while (!positionFound) {
+    //        collItems = collidingItems();
+    //        positionFound = true;
+    //        for (auto collItem : collItems) {
+    //            auto cell = static_cast<CCell *>(collItem);
+    //            if (cell) {
+    //                if (cell->isBusy()) {
+    //                    //Клетка занята ищем новое место
+    //                    positionFound = false;
+    //                    if (SCENE_WIDTH - m_width - this->pos().x() > 0) {
+    //                        //Место справа есть
+    //                        this->setX(this->pos().x() + ONE_WIDTH);
+    //                        break;
+    //                    } else {
+    //                        //Места справа нет
+    //                        this->setY(this->pos().y() + ONE_HEIGHT);
+    //                        this->setX(0);
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+
+    //    _changeBusyCells();
+
+    //    // TODO: [block move] Обработать ситуацию, когда место на сцене заканчивается
     return true;
+}
+
+void CVisualBlock::setPosition(const QPointF &pos)
+{
+    //Ровнение по Y
+    if (static_cast<qint32>(pos.y()) % ONE_HEIGHT > (ONE_HEIGHT / 2)) {
+        this->setY(pos.y() + (ONE_HEIGHT - static_cast<qint32>(pos.y()) % ONE_HEIGHT));
+    } else {
+        this->setY(pos.y() - (static_cast<qint32>(pos.y()) % ONE_HEIGHT));
+    }
+    //Ровнение по X
+    if (static_cast<qint32>(pos.x()) % ONE_WIDTH > (ONE_WIDTH / 2)) {
+        this->setX(pos.x() + (ONE_WIDTH - static_cast<qint32>(pos.x()) % ONE_WIDTH));
+    } else {
+        this->setX(pos.x() - (static_cast<qint32>(pos.x()) % ONE_WIDTH));
+    }
+
+    _changeBusyCells();
 }

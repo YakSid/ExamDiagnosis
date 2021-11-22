@@ -2,9 +2,10 @@
 
 CCell::CCell(QString id, QObject *parent) : QObject(parent), m_id(id) {}
 
-void CCell::setBusy(bool st)
+void CCell::setBusy(bool st, qint32 wordId)
 {
     m_busy = st;
+    m_wordId = wordId;
     update();
 }
 

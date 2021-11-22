@@ -26,6 +26,8 @@ private:
     Ui::MainWindow *ui;
     CAreaManager *m_areaMg { nullptr };
     CMenu *m_menu { nullptr };
+
+    SExample m_example;
 };
 
 #endif // MAINWINDOW_H

@@ -1,6 +1,7 @@
 #include "careamanager.h"
 #include <QDateTime>
 #include <random>
+#include <QMessageBox>
 
 CAreaManager::CAreaManager(QWidget *parent) : QGraphicsView(parent)
 {
@@ -39,7 +40,7 @@ void CAreaManager::init()
             // Добавить занятость клеткам с текстом
             for (auto item : text->collidingItems()) {
                 auto cell = static_cast<CCell *>(item);
-                cell->setBusy(true);
+                cell->setBusy(true, -(i + 1));
             }
         }
     }
@@ -65,9 +66,57 @@ void CAreaManager::addWords(QList<SWord *> words)
     }
 }
 
-QString CAreaManager::summarize()
+void CAreaManager::summarize(const QStringList &combinations)
 {
-    // TODO: СЕЙЧАС окрашивание
+    //"1-2-3.4-5-6.7-8.9"
+    auto combination = combinations.first(); // TODO: сделать для нескольких комбинаций
+
+    //Переводим нашу комбинацию в порядковый лист
+    QList<qint32> originalComb;
+    auto blocks = combination.split('.', QString::SkipEmptyParts);
+    qint32 blockCounter = -1;
+    for (auto block : blocks) {
+        originalComb.append(blockCounter);
+        auto words = block.split('-', QString::SkipEmptyParts);
+        for (auto word : words) {
+            originalComb.append(word.toInt());
+        }
+        blockCounter--;
+    }
+    //Составляем список порядка слов сейчас
+    //! Порядок слов сейчас
+    QList<qint32> order;
+    for (auto line : m_matrix) {
+        for (auto cell : *line) {
+            if (cell->isBusy())
+                order += cell->getWordId();
+        }
+    }
+    //Чистим от дубликатов с конца
+    for (int i = order.length() - 1; i > 0; i--) {
+        if (order[i - 1] == order[i]) {
+            order.removeAt(i);
+        }
+    }
+
+    if (originalComb.count() != order.count()) {
+        QMessageBox msg;
+        msg.setText("Используйте все слова");
+        msg.exec();
+        return;
+    }
+
+    // TODO: усовершенствовать алгоритм окрашивания
+    for (int i = 0; i < order.count(); i++) {
+        if (order[i] > 0) {
+            if (order[i] == originalComb[i]) {
+                _setBlockState(order[i], EBlockState::correct);
+            } else {
+                _setBlockState(order[i], EBlockState::incorrect);
+            }
+        }
+    }
+
     //Показать правильные возможные результаты (немодальным окном, в геометрии указав открыть слева от окна)
 }
 
@@ -115,4 +164,14 @@ QPoint CAreaManager::_findFreePlaceForBlock(quint32 width)
     }
 
     return QPoint();
+}
+
+void CAreaManager::_setBlockState(qint32 wordId, EBlockState state)
+{
+    for (auto block : m_vBlocks) {
+        if (block->getWordId() == wordId) {
+            block->setState(state);
+            return;
+        }
+    }
 }

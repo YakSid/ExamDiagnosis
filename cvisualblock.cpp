@@ -149,7 +149,7 @@ void CVisualBlock::_changeBusyCells()
         auto cell = static_cast<CCell *>(item);
         collidingCells.append(cell);
         if (!m_busyCells.contains(cell)) {
-            cell->setBusy(true);
+            cell->setBusy(true, m_wordId);
         }
     }
     for (auto busyCell : m_busyCells) {

@@ -20,13 +20,15 @@ public:
     //! Добавить на сцену блоки со словами в пул слов (внизу)
     void addWords(QList<SWord *> words);
     //! Составить получившуюся комбинацию слов и окрасить верные/неверные позиции
-    QString summarize();
+    void summarize(const QStringList &combinations);
 
 private:
     void _buildMatrix();
 
     //! Ищем свободное место для блока
     QPoint _findFreePlaceForBlock(quint32 width);
+    //! Найти в списке у какого блока это слово и сделать ему нужный цвет
+    void _setBlockState(qint32 wordId, EBlockState state);
 
 private:
     QGraphicsScene *m_scene;

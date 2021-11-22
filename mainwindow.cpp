@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QCursor>
 
+// TODO: Добавить ИКОНКИ
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     m_menu = new CMenu();
@@ -12,7 +14,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     if (m_menu->getMode() != 1)
         exit(0);
-    auto example = CJsonManager::loadFromFile(m_menu->getPathToSelectedTest());
+    m_example = CJsonManager::loadFromFile(m_menu->getPathToSelectedTest());
+
+    qDebug() << m_example.combinations.count();
 
     ui->setupUi(this);
     m_areaMg = new CAreaManager();
@@ -26,8 +30,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // NOTE: фикс бага writer программы
     QList<qint32> usedIds;
     //! Минимальный id используемый в комбинациях (другие слова оказались мусором)
-    qint32 minId = example.words.count();
-    auto comb = example.combinations.first();
+    qint32 minId = m_example.words.count();
+    auto comb = m_example.combinations.first();
     QString value; //Значение, которое будет сравниваться с минимальным
     //Проход по строке-комбинации и поиск минимального id
     for (int i = 0; i < comb.length(); i++) {
@@ -46,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //! Отбираем нужные слова
     QList<SWord *> words;
-    for (auto word : example.words) {
+    for (auto word : m_example.words) {
         if (word->id >= minId)
             if (usedIds.contains(word->id))
                 words.append(word);
@@ -66,5 +70,5 @@ void MainWindow::on_pb_checkAnswer_clicked()
     // cresult
 
     // Подвдодим итог - окрашиваем наши ответы в сигнализирующие цвета
-    m_areaMg->summarize();
+    m_areaMg->summarize(m_example.combinations);
 }

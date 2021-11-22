@@ -46,6 +46,8 @@ const qint32 ONE_WIDTH = BLOCK_WIDTH + XMARGIN_BETWEEN_CELLS;
 const qint32 ONE_HEIGHT = BLOCK_HEIGHT + YMARGIN_BETWEEN_CELLS;
 const qint32 SCENE_HEIGHT = 650;
 const qint32 SCENE_WIDTH = 950;
+//! id, который обозначает, что клетка занята текстом
+const qint32 TEXT_ID = -2;
 
 const QStringList DIS_BLOCK { "Основное заболевание:", "Фоновое заболевание:", "Осложнения основного заболевания:",
                               "Сопутствующие заболевания:" };

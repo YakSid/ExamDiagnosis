@@ -21,6 +21,8 @@ public:
     quint32 getWidth() { return m_width; }
     //! Мой метод, отличающийся от классического использованием busyCells
     void setPosition(const QPointF &pos);
+    //! Вернуть номер слова, которое записано в блоке
+    qint32 getWordId() { return m_wordId; }
 
 private:
     QRectF boundingRect() const;

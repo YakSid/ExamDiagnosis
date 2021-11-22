@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QMap>
 
+#include "cstructs.h"
+
 // TODO: СЕГОДНЯ окно вывода результата
 /// Класс выводит на экран окно с правильными вариантами диагноза
 
@@ -19,8 +21,15 @@ public:
     explicit CResult(QWidget *parent = nullptr);
     ~CResult();
 
+    void init(const SExample &example);
+
+private:
+    QString _findWordById(qint32 id);
+
 private:
     Ui::CResult *ui;
+
+    SExample m_example;
 };
 
 #endif // CRESULT_H

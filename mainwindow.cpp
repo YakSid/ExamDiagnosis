@@ -1,11 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ccrypter.h"
+#include "cresult.h"
 #include <QDebug>
 #include <QCursor>
 
 // TODO: Добавить ИКОНКИ
 
+// TODO: деструкторы сделать, проверить
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     m_menu = new CMenu();
@@ -66,9 +68,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pb_checkAnswer_clicked()
 {
-    //Отображаем окно с правильным результатами
-    // cresult
-
     // Подвдодим итог - окрашиваем наши ответы в сигнализирующие цвета
     m_areaMg->summarize(m_example.combinations);
+
+    //Отображаем окно с правильным результатами
+    auto result = new CResult(this);
+    result->init(m_example);
+    result->setModal(false);
+    result->exec();
 }

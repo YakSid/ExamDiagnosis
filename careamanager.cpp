@@ -116,8 +116,6 @@ void CAreaManager::summarize(const QStringList &combinations)
             }
         }
     }
-
-    //Показать правильные возможные результаты (немодальным окном, в геометрии указав открыть слева от окна)
 }
 
 void CAreaManager::_buildMatrix()

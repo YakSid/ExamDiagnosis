@@ -6,13 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>750</height>
+    <width>673</width>
+    <height>719</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Правильный вариант</string>
   </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QTextEdit" name="te_text">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

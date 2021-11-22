@@ -83,4 +83,6 @@ QString CResult::_findWordById(qint32 id)
         if (word->id == id)
             return word->text;
     }
+
+    return QString();
 }

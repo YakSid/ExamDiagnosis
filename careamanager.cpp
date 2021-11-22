@@ -99,13 +99,6 @@ void CAreaManager::summarize(const QStringList &combinations)
         }
     }
 
-    if (originalComb.count() != order.count()) {
-        QMessageBox msg;
-        msg.setText("Используйте все слова");
-        msg.exec();
-        return;
-    }
-
     // TODO: усовершенствовать алгоритм окрашивания
     for (int i = 0; i < order.count(); i++) {
         if (order[i] > 0) {

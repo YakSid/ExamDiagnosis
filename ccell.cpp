@@ -19,6 +19,7 @@ void CCell::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    Q_UNUSED(painter);
     /*painter->setPen(Qt::gray);
     painter->setRenderHint(QPainter::Antialiasing);
     if (m_busy) {

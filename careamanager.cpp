@@ -71,14 +71,23 @@ void CAreaManager::summarize(const QStringList &combinations)
     //"1-2-3.4-5-6.7-8.9"
     auto combination = combinations.first(); // TODO: сделать для нескольких комбинаций
 
+    // TODO: [СЕЙЧАС] Сделать проверку окрашивания по типу окраски последнего, чтобы было правильно
+
     //Переводим нашу комбинацию в порядковый лист
+    //! Правильный порядок слов
     QList<qint32> originalComb;
-    auto blocks = combination.split('.', QString::SkipEmptyParts);
+    //! Список слов, которые не должны быть в последнем блоке, если они там, то ошибка
+    QList<qint32> notLastBlockResident;
+    auto blocks = combination.split('.');
+    if (blocks.last().isEmpty())
+        blocks.removeLast();
     qint32 blockCounter = -1;
     for (auto block : blocks) {
         originalComb.append(blockCounter);
         auto words = block.split('-', QString::SkipEmptyParts);
         for (auto word : words) {
+            if (blockCounter != -4)
+                notLastBlockResident.append(word.toInt());
             originalComb.append(word.toInt());
         }
         blockCounter--;
@@ -94,14 +103,30 @@ void CAreaManager::summarize(const QStringList &combinations)
     }
     //Чистим от дубликатов с конца
     for (int i = order.length() - 1; i > 0; i--) {
+        //Если order[i] < 0 значит это разделитель блоков
         if (order[i - 1] == order[i]) {
             order.removeAt(i);
         }
     }
 
-    // TODO: усовершенствовать алгоритм окрашивания
+    //Сверка получившегося с необходимым, окрашивание
+    //! Когда доберёмся до главного блока, то уже не важно какие там слова
+    bool lastBlock = false;
     for (int i = 0; i < order.count(); i++) {
-        if (order[i] > 0) {
+        //Проверка последнего блока
+        if (lastBlock) {
+            if (notLastBlockResident.contains(order[i])) {
+                _setBlockState(order[i], EBlockState::incorrect);
+            } else {
+                _setBlockState(order[i], EBlockState::noDifference);
+            }
+        }
+        //Индикация, что наступил последний блок
+        if (order[i] == -4) {
+            lastBlock = true;
+        }
+        //Проверка первых трёх блоков
+        if (order[i] > 0 && !lastBlock) {
             if (order[i] == originalComb[i]) {
                 _setBlockState(order[i], EBlockState::correct);
             } else {

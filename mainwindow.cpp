@@ -5,8 +5,6 @@
 #include <QDebug>
 #include <QCursor>
 
-// TODO: Добавить ИКОНКИ
-
 // TODO: деструкторы сделать, проверить
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {

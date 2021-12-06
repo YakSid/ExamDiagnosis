@@ -20,8 +20,12 @@ public:
 
 private slots:
     void on_pb_checkAnswer_clicked();
+    void on_pb_back_clicked();
 
 private:
+    //! Ищем нужные слова - фикс бага программы Writer
+    QList<SWord *> _findWordsFixWritersBug();
+
 private:
     Ui::MainWindow *ui;
     CAreaManager *m_areaMg { nullptr };

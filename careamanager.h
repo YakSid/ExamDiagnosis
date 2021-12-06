@@ -7,8 +7,6 @@
 #include "ccell.h"
 #include "cvisualblock.h"
 
-// TODO: на будущее - увеличить шрифт?
-
 class CAreaManager : public QGraphicsView
 {
     Q_OBJECT
@@ -21,6 +19,8 @@ public:
     void addWords(QList<SWord *> words);
     //! Составить получившуюся комбинацию слов и окрасить верные/неверные позиции
     void summarize(const QStringList &combinations);
+    //! Подготовить для следующего теста - обнулить
+    void clearArea();
 
 private:
     void _buildMatrix();

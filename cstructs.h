@@ -36,7 +36,7 @@ const auto BLOCK_SEPARATOR = QStringLiteral(".");
 
 enum class EBlockState { none, correct, incorrect, noDifference };
 
-const qint32 BLOCK_HEIGHT = 20;
+const qint32 BLOCK_HEIGHT = 22;
 const qint32 BLOCK_WIDTH = 20;
 const qint32 XMARGIN_BETWEEN_CELLS = 5;
 const qint32 YMARGIN_BETWEEN_CELLS = 3;

@@ -35,7 +35,7 @@ private:
     Ui::CMenu *ui;
     CMenuSettings *m_settings { nullptr };
 
-    quint8 m_mode = 0;
+    quint8 m_mode { 0 };
     QString m_pathToTests;
     //! Путь к выбранному тесту
     QString m_selectedPath;

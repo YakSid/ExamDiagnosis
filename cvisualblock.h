@@ -24,6 +24,9 @@ public:
     //! Вернуть номер слова, которое записано в блоке
     qint32 getWordId() { return m_wordId; }
 
+    //! Сделать все занятые клетки свободными. Используется при удалении блока
+    void setCellsFree();
+
 private:
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

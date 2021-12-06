@@ -84,6 +84,7 @@ void CVisualBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setFont(m_font);
     painter->setBrush(Qt::black);
     painter->drawText(QRect(0, 0, static_cast<qint32>(m_width), BLOCK_HEIGHT), Qt::AlignCenter, m_text);
+    // BUG: [Сейчас] вылетает, когда доходит до границы карты?
 }
 
 void CVisualBlock::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -107,7 +108,12 @@ void CVisualBlock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     // Автоперемещение на нужную позицию рядом
     auto point = _findFreePlace();
-    this->setPosition(point);
+    if (point == QPoint()) {
+        //Не нашли свободное место ниже правее
+        _align(m_catchPos);
+    } else {
+        this->setPosition(point);
+    }
 }
 
 qint32 CVisualBlock::_countWidthForText()
@@ -187,6 +193,9 @@ QPoint CVisualBlock::_findFreePlace()
         }
     }
 
+    //Не нашли свободное место ниже правее
+    //
+
     return QPoint();
 }
 
@@ -210,4 +219,11 @@ void CVisualBlock::setPosition(const QPointF &pos)
 {
     _align(pos);
     _changeBusyCells();
+}
+
+void CVisualBlock::setCellsFree()
+{
+    for (auto cell : m_busyCells) {
+        cell->setBusy(false);
+    }
 }

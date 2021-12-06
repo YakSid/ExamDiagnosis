@@ -48,7 +48,7 @@ void CAreaManager::init()
 
 void CAreaManager::addWords(QList<SWord *> words)
 {
-    QFont wordsFont("times", 10);
+    QFont wordsFont("times", 12);
     //Случайная генерация основанная на Вихре Мерсенна
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -58,7 +58,7 @@ void CAreaManager::addWords(QList<SWord *> words)
     }
 
     for (int i = 0; i < words.count(); i++) {
-        auto vBlock = new CVisualBlock(words.at(i)->id, words.at(i)->text, wordsFont, m_matrix);
+        auto vBlock = new CVisualBlock(words.at(i)->id, words.at(i)->text, wordsFont, m_matrix, this);
         m_vBlocks.append(vBlock);
         m_scene->addItem(vBlock);
         auto pos = _findFreePlaceForBlock(vBlock->getWidth());
@@ -134,6 +134,15 @@ void CAreaManager::summarize(const QStringList &combinations)
             }
         }
     }
+}
+
+void CAreaManager::clearArea()
+{
+    for (auto block : m_vBlocks) {
+        block->setCellsFree();
+        delete block;
+    }
+    m_vBlocks.clear();
 }
 
 void CAreaManager::_buildMatrix()

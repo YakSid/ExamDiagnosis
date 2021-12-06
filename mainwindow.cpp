@@ -16,8 +16,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         exit(0);
     m_example = CJsonManager::loadFromFile(m_menu->getPathToSelectedTest());
 
-    qDebug() << m_example.combinations.count();
-
     ui->setupUi(this);
     m_areaMg = new CAreaManager();
     ui->groupBox->layout()->addWidget(m_areaMg);
@@ -27,7 +25,42 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_areaMg->setSceneRect(0, 0, 950, 650);
     m_areaMg->init();
 
-    // NOTE: фикс бага writer программы
+    m_areaMg->addWords(_findWordsFixWritersBug());
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::on_pb_checkAnswer_clicked()
+{
+    // Подвдодим итог - окрашиваем наши ответы в сигнализирующие цвета
+    m_areaMg->summarize(m_example.combinations);
+
+    //Отображаем окно с правильным результатами
+    auto result = new CResult(this);
+    result->init(m_example);
+    result->setModal(false);
+    result->exec();
+}
+
+void MainWindow::on_pb_back_clicked()
+{
+    m_areaMg->clearArea();
+
+    m_menu->updateMode();
+    m_menu->exec();
+
+    if (m_menu->getMode() != 1)
+        exit(0);
+    m_example = CJsonManager::loadFromFile(m_menu->getPathToSelectedTest());
+
+    m_areaMg->addWords(_findWordsFixWritersBug());
+}
+
+QList<SWord *> MainWindow::_findWordsFixWritersBug()
+{
     QList<qint32> usedIds;
     //! Минимальный id используемый в комбинациях (другие слова оказались мусором)
     qint32 minId = m_example.words.count();
@@ -56,22 +89,5 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                 words.append(word);
     }
 
-    m_areaMg->addWords(words);
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
-
-void MainWindow::on_pb_checkAnswer_clicked()
-{
-    // Подвдодим итог - окрашиваем наши ответы в сигнализирующие цвета
-    m_areaMg->summarize(m_example.combinations);
-
-    //Отображаем окно с правильным результатами
-    auto result = new CResult(this);
-    result->init(m_example);
-    result->setModal(false);
-    result->exec();
+    return words;
 }

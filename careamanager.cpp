@@ -70,67 +70,66 @@ void CAreaManager::summarize(const QStringList &combinations)
 {
     //"1-2-3.4-5-6.7-8.9"
     auto combination = combinations.first(); // TODO: сделать для нескольких комбинаций
+    // NOTE: Удаление последней точки, если она есть (она всегда есть)
+    if (combination.right(1) == ".")
+        combination.chop(1);
 
-    // TODO: [СЕЙЧАС] Сделать проверку окрашивания по типу окраски последнего, чтобы было правильно
+    //Переводим правильную комбинацию в список правильных порядков
+    QList<QList<qint32>> rightCombination = _getRightOrderCombination(combination);
 
-    //Переводим нашу комбинацию в порядковый лист
-    //! Правильный порядок слов
-    QList<qint32> originalComb;
-    //! Список слов, которые не должны быть в последнем блоке, если они там, то ошибка
-    QList<qint32> notLastBlockResident;
-    auto blocks = combination.split('.');
-    if (blocks.last().isEmpty())
-        blocks.removeLast();
-    qint32 blockCounter = -1;
-    for (auto block : blocks) {
-        originalComb.append(blockCounter);
-        auto words = block.split('-', QString::SkipEmptyParts);
-        for (auto word : words) {
-            if (blockCounter != -4)
-                notLastBlockResident.append(word.toInt());
-            originalComb.append(word.toInt());
-        }
-        blockCounter--;
-    }
-    //Составляем список порядка слов сейчас
-    //! Порядок слов сейчас
-    QList<qint32> order;
-    for (auto line : m_matrix) {
-        for (auto cell : *line) {
-            if (cell->isBusy())
-                order += cell->getWordId();
-        }
-    }
-    //Чистим от дубликатов с конца
-    for (int i = order.length() - 1; i > 0; i--) {
-        //Если order[i] < 0 значит это разделитель блоков
-        if (order[i - 1] == order[i]) {
-            order.removeAt(i);
-        }
-    }
+    //Переводим нашу комбинацию в список наших порядков
+    QList<QList<qint32>> ourCombination = _getCurrentOrderCombination();
 
     //Сверка получившегося с необходимым, окрашивание
-    //! Когда доберёмся до главного блока, то уже не важно какие там слова
-    bool lastBlock = false;
-    for (int i = 0; i < order.count(); i++) {
-        //Проверка последнего блока
-        if (lastBlock) {
-            if (notLastBlockResident.contains(order[i])) {
-                _setBlockState(order[i], EBlockState::incorrect);
-            } else {
-                _setBlockState(order[i], EBlockState::noDifference);
+    for (int block = 0; block < 5; block++) {
+        if (block == 3) {
+            //Проверка 3 (последнего) блока (тут не важен порядок слов)
+            QList<qint32> rightOrderInBlock = rightCombination.at(block);
+            QList<qint32> ourOrderInBlock = ourCombination.at(block);
+
+            for (auto num : ourOrderInBlock) {
+                if (rightOrderInBlock.contains(num)) {
+                    _setBlockState(num, EBlockState::noDifference);
+                } else {
+                    _setBlockState(num, EBlockState::incorrect);
+                }
             }
-        }
-        //Индикация, что наступил последний блок
-        if (order[i] == -4) {
-            lastBlock = true;
-        }
-        //Проверка первых трёх блоков
-        if (order[i] > 0 && !lastBlock) {
-            if (order[i] == originalComb[i]) {
-                _setBlockState(order[i], EBlockState::correct);
-            } else {
-                _setBlockState(order[i], EBlockState::incorrect);
+        } else if (block == 4) {
+            //Проверка неиспользованных слов (если есть 4 блок в ourCombinations)
+            if (ourCombination.length() > 4) {
+                if (!ourCombination.at(4).isEmpty())
+                    for (auto num : ourCombination.at(4))
+                        _setBlockState(ourCombination.at(4).at(num), EBlockState::incorrect);
+                QMessageBox msg;
+                msg.setText("Вы использовали не все блоки");
+                msg.exec();
+            }
+        } else {
+            //Проверка 0,1,2 блоков
+            QList<qint32> rightOrderInBlock = rightCombination.at(block);
+            QList<qint32> ourOrderInBlock = ourCombination.at(block);
+
+            if (ourOrderInBlock.isEmpty())
+                continue;
+
+            //Избегаем ошибки разницы количества слов
+            if (rightOrderInBlock.length() < ourOrderInBlock.length()) {
+                ///Если наших слов больше, то это ошибка - для сверки дополняем правильную комбинацию
+                ///по-любому-ошибочными вариантами, чтобы окрасить наши в красный за несовпадение - по факту за неверный
+                ///блок
+                qint32 countOfWrongWords = ourOrderInBlock.length() - rightOrderInBlock.length();
+                for (int i = 0; i < countOfWrongWords; i++) {
+                    rightOrderInBlock += -10;
+                }
+            }
+
+            //Сверяем все слова в блоке верном и имеющемся
+            for (int i = 0; i < ourOrderInBlock.length(); i++) {
+                if (rightOrderInBlock.at(i) == ourOrderInBlock.at(i)) {
+                    _setBlockState(ourOrderInBlock.at(i), EBlockState::correct);
+                } else {
+                    _setBlockState(ourOrderInBlock.at(i), EBlockState::incorrect);
+                }
             }
         }
     }
@@ -199,4 +198,70 @@ void CAreaManager::_setBlockState(qint32 wordId, EBlockState state)
             return;
         }
     }
+}
+
+QList<QList<qint32>> CAreaManager::_getRightOrderCombination(const QString &combination)
+{
+    QList<QList<qint32>> rightCombination;
+    auto blocks = combination.split('.');
+    for (auto block : blocks) {
+        auto numbersInBlock = block.split('-', QString::SkipEmptyParts);
+        QList<qint32> rightCombInBlock;
+        for (auto num : numbersInBlock) {
+            rightCombInBlock.append(num.toInt());
+        }
+        rightCombination.append(rightCombInBlock);
+    }
+    return rightCombination;
+}
+
+QList<QList<qint32>> CAreaManager::_getCurrentOrderCombination()
+{
+    QList<QList<qint32>> order;
+    QList<qint32> orderOldStyle = _getCurrentOrderOldStyle();
+
+    /// TODO: чуть потом, но надо: рефакторинг, чтобы убрать костыль и тогда заработает окраска при полном незаполнении
+    /// (сейчас 4блочные показывают серый цвет вемсто красного т.к. количество блоков здесь получается 4, а не 5, как
+    /// обычно
+
+    //Перевод комбинации из старого стиля в новый
+    auto currentOrderInBlock = new QList<qint32>;
+    for (int i = 0; i < orderOldStyle.length(); i++) {
+        if (orderOldStyle[i] > 0) {
+            //число - записываем в текущий порядок
+            currentOrderInBlock->append(orderOldStyle[i]);
+        } else {
+            //разделитель - записываем существующий и создаём новый
+            order.append(*currentOrderInBlock);
+            delete currentOrderInBlock;
+            currentOrderInBlock = new QList<qint32>;
+        }
+    }
+    order.append(*currentOrderInBlock);
+    delete currentOrderInBlock;
+
+    //Костыль, который удаляет первый лист т.к. он пустой т.к. здесь я не учитываю -1 разделитель
+    if (order.first().isEmpty())
+        order.takeFirst();
+
+    return order;
+}
+
+QList<qint32> CAreaManager::_getCurrentOrderOldStyle()
+{
+    QList<qint32> order;
+    for (auto line : m_matrix) {
+        for (auto cell : *line) {
+            if (cell->isBusy())
+                order += cell->getWordId();
+        }
+    }
+    //Чистим от дубликатов с конца
+    for (int i = order.length() - 1; i > 0; i--) {
+        //Если order[i] < 0 значит это разделитель блоков
+        if (order[i - 1] == order[i]) {
+            order.removeAt(i);
+        }
+    }
+    return order;
 }

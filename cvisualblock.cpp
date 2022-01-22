@@ -84,7 +84,6 @@ void CVisualBlock::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setFont(m_font);
     painter->setBrush(Qt::black);
     painter->drawText(QRect(0, 0, static_cast<qint32>(m_width), BLOCK_HEIGHT), Qt::AlignCenter, m_text);
-    // BUG: [Сейчас] вылетает, когда доходит до границы карты?
 }
 
 void CVisualBlock::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -110,7 +109,7 @@ void CVisualBlock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     auto point = _findFreePlace();
     if (point == QPoint()) {
         //Не нашли свободное место ниже правее
-        _align(m_catchPos);
+        // BUG: тут и в m_areaMg при расстановке также: если выходит за границы и нет места, то беда
     } else {
         this->setPosition(point);
     }
@@ -192,9 +191,6 @@ QPoint CVisualBlock::_findFreePlace()
             }
         }
     }
-
-    //Не нашли свободное место ниже правее
-    //
 
     return QPoint();
 }

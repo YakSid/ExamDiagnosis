@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_areaMg->setRenderHint(QPainter::Antialiasing);
     m_areaMg->setCacheMode(QGraphicsView::CacheBackground);
     m_areaMg->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-    m_areaMg->setSceneRect(0, 0, 950, 650);
+    m_areaMg->setSceneRect(0, 0, 950, 700);
     m_areaMg->init();
 
     m_areaMg->addWords(_findWordsFixWritersBug());

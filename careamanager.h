@@ -30,6 +30,15 @@ private:
     //! Найти в списке у какого блока это слово и сделать ему нужный цвет
     void _setBlockState(qint32 wordId, EBlockState state);
 
+    //---Вычисления результата---
+    //! Переводим правильную комбинацию в список правильных порядков
+    QList<QList<qint32>> _getRightOrderCombination(const QString &combination);
+    //! Получить текущий порядок слов
+    QList<QList<qint32>> _getCurrentOrderCombination();
+    //! Получить текущий порядок слов в старом стиле
+    QList<qint32> _getCurrentOrderOldStyle();
+    //---------------------------
+
 private:
     QGraphicsScene *m_scene;
     QList<QList<CCell *> *> m_matrix;

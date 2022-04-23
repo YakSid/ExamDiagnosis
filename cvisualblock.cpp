@@ -44,6 +44,7 @@ CVisualBlock::CVisualBlock(qint32 wordId, QString text, QFont font, const QList<
                 }
             }
             this->setToolTip(tooltipText);
+            //
         }
     }
 

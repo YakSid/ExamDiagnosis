@@ -38,10 +38,10 @@ void CMenu::on_pb_settings_clicked()
     m_settings->setModal(true);
     m_settings->exec();
 
-    auto path = m_settings->getPath();
-    if (!path.isEmpty()) {
-        _savePath(path);
-        _fillLw(path);
+    auto m_pathToTests = m_settings->getPath();
+    if (!m_pathToTests.isEmpty()) {
+        _savePath(m_pathToTests);
+        _fillLw(m_pathToTests);
     }
 }
 

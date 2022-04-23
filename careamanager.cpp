@@ -9,6 +9,7 @@ CAreaManager::CAreaManager(QWidget *parent) : QGraphicsView(parent)
     setScene(m_scene);
 
     this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setStyleSheet("QToolTip {font : 14px}");
 }
 
 CAreaManager::~CAreaManager()
@@ -27,8 +28,9 @@ void CAreaManager::init()
     m_scene->addRect(SCENE_WIDTH - 10, SCENE_HEIGHT - 10, 10, 10, QPen(Qt::blue), QBrush(Qt::red));*/
 
     //Блоки заболеваний
-    QFont disFont("times", 11);
+    QFont disFont("times", 12);
     disFont.setItalic(true);
+    disFont.setBold(true);
     for (int i = 0; i <= DIS_BLOCK.count(); i++) {
         if (i == DIS_BLOCK.count()) {
             //Добавление зон для слов
@@ -82,7 +84,7 @@ void CAreaManager::summarize(const QStringList &combinations)
 
     //Сверка получившегося с необходимым, окрашивание
     for (int block = 0; block < 5; block++) {
-        if (block == 3) {
+        if (block == 3 || block == 2) {
             //Проверка 3 (последнего) блока (тут не важен порядок слов)
             QList<qint32> rightOrderInBlock = rightCombination.at(block);
             QList<qint32> ourOrderInBlock = ourCombination.at(block);
@@ -105,7 +107,7 @@ void CAreaManager::summarize(const QStringList &combinations)
                 msg.exec();
             }
         } else {
-            //Проверка 0,1,2 блоков
+            //Проверка 0 и 1 блоков
             QList<qint32> rightOrderInBlock = rightCombination.at(block);
             QList<qint32> ourOrderInBlock = ourCombination.at(block);
 

@@ -2,10 +2,10 @@ IDI_ICON1 ICON "t_icon.ico"
 
 #include <windows.h>
 
-#define VER_FILEVERSION 1
-#define VER_FILEVERSION_STR "1"
-#define VER_PRODUCTVERSION 1
-#define VER_PRODUCTVERSION_STR "1"
+#define VER_FILEVERSION 2
+#define VER_FILEVERSION_STR "2"
+#define VER_PRODUCTVERSION 2
+#define VER_PRODUCTVERSION_STR "2"
 #define VER_FILEDESCRIPTION_STR "Exam Diagnosis"
 #define VER_LEGALCOPYRIGHT_STR "YakSid"
 #define VER_ORIGINALFILENAME_STR "Exam Diagnosis"
